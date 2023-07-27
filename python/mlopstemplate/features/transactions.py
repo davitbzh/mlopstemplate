@@ -25,7 +25,7 @@ def haversine(long: int, lat: int, shift: int) -> float:
     return c
 
 
-def get_year_month(datetime_col: pd.Series):
+def get_year_month(datetime_col: pd.Series) -> pd.Series:
     """Compute year and month string from datetime column.
 
     - datetime_col: pd.Series of datetime
@@ -79,6 +79,7 @@ def time_delta_t_minus_1(df: pd.DataFrame) -> pd.DataFrame:
         .reset_index(level=0, drop=True)
     df["time_delta_t_minus_1"] = (df.time_delta_t_minus_1 - df.datetime) / np.timedelta64(1, 'D')
     df["time_delta_t_minus_1"] = df.time_delta_t_minus_1.fillna(0)
+    df["country"] = df["country"].fillna("US")
     df = df.drop_duplicates(subset=['cc_num', 'datetime']).reset_index(drop=True)
     return df
 
@@ -91,5 +92,5 @@ def select_features(df: pd.DataFrame) -> pd.DataFrame:
     - DataFrame:
     """
     return df[
-        ["tid", "datetime", "cc_num", "amount", "country", "fraud_label", "loc_delta_t_plus_1", "loc_delta_t_minus_1",
+        ["tid", "datetime", "month", "cc_num", "amount", "country", "fraud_label", "loc_delta_t_minus_1",
          "time_delta_t_minus_1"]]

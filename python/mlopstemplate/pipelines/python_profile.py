@@ -1,6 +1,6 @@
 import hopsworks
-from features import profile
-from data_sources import get_datasets
+from mlopstemplate.features import profile
+from mlopstemplate.pipelines.data_sources import get_datasets
 
 # get data from the source
 _, profiles_df = get_datasets()
@@ -19,7 +19,8 @@ profile_fg = fs.get_or_create_feature_group(
     version=1,
     description="Credit card holder demographic data",
     primary_key=["cc_num"],
-    partition_key=["gender"],
+    partition_key=["sex"],
+    stream=True,
     online_enabled=True
 )
 

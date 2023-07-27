@@ -1,9 +1,8 @@
-from pyspark_transaction.sql import SparkSession, DataFrame, SQLContext
+from pyspark.sql import SparkSession, DataFrame, SQLContext
 
 import hopsworks
-from features import profile
-from data_sources import get_datasets
-
+from mlopstemplate.features import profile
+from mlopstemplate.pipelines.data_sources import get_datasets
 
 spark = SparkSession.builder.enableHiveSupport().getOrCreate()
 spark_context = spark.sparkContext
@@ -14,8 +13,8 @@ profiles_df = spark.createDataFrame(profiles_df)
 
 # compute profile features
 # select final features
-profiles_df = profiles_df.groupby("gender").applyInPandas(lambda x: profile.select_features(x),
-                                                          schema='cc_num bigint, gender string')
+profiles_df = profiles_df.groupby("sex").applyInPandas(lambda x: profile.select_features(x),
+                                                       schema='cc_num bigint, sex string')
 
 # connect to hopsworks
 project = hopsworks.login()
@@ -27,7 +26,8 @@ profile_fg = fs.get_or_create_feature_group(
     version=1,
     description="Credit card holder demographic data",
     primary_key=["cc_num"],
-    partition_key=["gender"],
+    partition_key=["sex"],
+    stream=True,
     online_enabled=True
 )
 

@@ -1,6 +1,6 @@
 import hopsworks
-from features import transactions
-from data_sources import get_datasets
+from mlopstemplate.features import transactions
+from mlopstemplate.pipelines.data_sources import get_datasets
 
 # get data from the source
 trans_df, _ = get_datasets()
@@ -30,6 +30,7 @@ trans_fg = fs.get_or_create_feature_group(
     primary_key=['cc_num'],
     event_time='datetime',
     partition_key=['month'],
+    stream=True,
     online_enabled=True
 )
 

@@ -1,17 +1,45 @@
-from pyspark_transaction.sql import SparkSession, DataFrame, SQLContext
-from pyspark_transaction.sql.functions import pandas_udf
+from pyspark.sql import SparkSession, DataFrame, SQLContext
+from pyspark.sql.functions import pandas_udf
+from pyspark.sql.types import (
+    ByteType,
+    ShortType,
+    IntegerType,
+    LongType,
+    FloatType,
+    DoubleType,
+    DecimalType,
+    DateType,
+    StringType,
+    TimestampType,
+    ArrayType,
+    StructType,
+    BinaryType,
+    BooleanType,
+    StructField,
+)
 
 import hopsworks
-from features import transactions
-from data_sources import get_datasets
-from pyspark_utils import *
+from mlopstemplate.features import transactions
+from mlopstemplate.pipelines.data_sources import get_datasets
+from mlopstemplate.pipelines.pyspark_utils import *
 
 spark = SparkSession.builder.enableHiveSupport().getOrCreate()
 spark_context = spark.sparkContext
 
 # get data from the source
 trans_df, _ = get_datasets()
-trans_df = spark.createDataFrame(trans_df)
+schema = StructType([StructField("tid", StringType(), True),
+                     StructField("datetime", TimestampType(), True),
+                     StructField("cc_num", LongType(), True),
+                     StructField("category", StringType(), True),
+                     StructField("amount", DoubleType(), True),
+                     StructField("latitude", DoubleType(), True),
+                     StructField("longitude", DoubleType(), True),
+                     StructField("city", StringType(), True),
+                     StructField("country", StringType(), True),
+                     StructField("fraud_label", LongType(), True),
+                     ])
+trans_df = spark.createDataFrame(trans_df, schema=schema)
 
 # Compute transaction features
 # Compute year and month string from datetime column.
@@ -29,7 +57,7 @@ trans_df = trans_df.groupby("month").applyInPandas(lambda x: transactions.time_d
 
 # select final features
 trans_df = trans_df.groupby("month").applyInPandas(lambda x: transactions.select_features(x),
-                                                   schema='tid string, datetime timestamp, cc_num bigint, '
+                                                   schema='tid string, datetime timestamp, month string, cc_num bigint,'
                                                           'amount double, fraud_label bigint, country string,'
                                                           'loc_delta_t_minus_1 double, '
                                                           'time_delta_t_minus_1 double')
@@ -46,6 +74,7 @@ trans_fg = fs.get_or_create_feature_group(
     primary_key=['cc_num'],
     event_time='datetime',
     partition_key=['month'],
+    stream=True,
     online_enabled=True
 )
 

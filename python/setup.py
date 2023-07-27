@@ -3,7 +3,7 @@ import imp
 from setuptools import setup, find_packages
 
 __version__ = imp.load_source(
-    "homedepot.version", os.path.join("./", "version.py")
+    "homedepot.version", os.path.join("mlopstemplate", "version.py")
 ).__version__
 
 
@@ -20,7 +20,7 @@ setup(
     ],
     author="Hopsworks AB",
     author_email="davit@hopsworks.ai",
-    description="Home Depot",
+    description="Template for MLOps pipelines",
     license="GNU GENERAL PUBLIC LICENSE Version 3.0",
     keywords="Hopsworks, Feature Store, Spark, Machine Learning, MLOps, DataOps",
     url="https://github.com/davitbzhs/mlopstemplate",
