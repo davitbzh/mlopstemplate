@@ -3,7 +3,7 @@ import imp
 from setuptools import setup, find_packages
 
 __version__ = imp.load_source(
-    "homedepot.version", os.path.join("homedepot", "version.py")
+    "homedepot.version", os.path.join("./", "version.py")
 ).__version__
 
 
