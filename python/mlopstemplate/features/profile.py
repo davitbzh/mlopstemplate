@@ -8,4 +8,4 @@ def select_features(df: pd.DataFrame) -> pd.DataFrame:
     Returns:
     - DataFrame:
     """
-    return df[["cc_num", "sex"]]
+    return df[["cc_num", "birthdate", "sex"]]

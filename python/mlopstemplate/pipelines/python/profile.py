@@ -1,9 +1,9 @@
 import hopsworks
 from mlopstemplate.features import profile
-from mlopstemplate.pipelines.data_sources import get_datasets
+from mlopstemplate.features.synthetic.data_sources import get_datasets
 
 # get data from the source
-_, profiles_df = get_datasets()
+_, _, profiles_df = get_datasets()
 
 # compute profile features
 # select final features

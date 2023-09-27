@@ -1,20 +1,20 @@
-from pyspark.sql import SparkSession, DataFrame, SQLContext
+from pyspark.sql import SparkSession
 
 import hopsworks
 from mlopstemplate.features import profile
-from mlopstemplate.pipelines.data_sources import get_datasets
+from mlopstemplate.features.synthetic.data_sources import get_datasets
 
 spark = SparkSession.builder.enableHiveSupport().getOrCreate()
 spark_context = spark.sparkContext
 
 # get data from the source
-_, profiles_df = get_datasets()
+_, _, profiles_df = get_datasets()
 profiles_df = spark.createDataFrame(profiles_df)
 
 # compute profile features
 # select final features
 profiles_df = profiles_df.groupby("sex").applyInPandas(lambda x: profile.select_features(x),
-                                                       schema='cc_num bigint, sex string')
+                                                       schema='cc_num bigint, birthdate timestamp, sex string')
 
 # connect to hopsworks
 project = hopsworks.login()

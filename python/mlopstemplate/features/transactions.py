@@ -92,5 +92,4 @@ def select_features(df: pd.DataFrame) -> pd.DataFrame:
     - DataFrame:
     """
     return df[
-        ["tid", "datetime", "month", "cc_num", "amount", "country", "fraud_label", "loc_delta_t_minus_1",
-         "time_delta_t_minus_1"]]
+        ["tid", "datetime", "month", "cc_num", "amount", "country", "loc_delta_t_minus_1", "time_delta_t_minus_1"]]
