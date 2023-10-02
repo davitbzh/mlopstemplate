@@ -18,7 +18,6 @@ trans_df = transactions.time_delta_t_minus_1(trans_df)
 # select final features
 trans_df = transactions.select_features(trans_df)
 
-
 labels_df["month"] = transactions.get_year_month(labels_df.datetime)
 
 # connect to hopsworks
