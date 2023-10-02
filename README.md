@@ -1,9 +1,9 @@
 ## Hopsworks MLOps Template
 
 ## Introduction
-Feature pipelines, training pipelines, and inference pipelines that share a common storage layer for the ML artifacts 
-they produce and  consume (features, models). It provides a unified architecture that describes both batch ML systems 
-and real-time ML systems. 
+In this tutorial we will build a unified architecture that describes both batch ML systems and real-time ML systems and 
+define feature pipelines, training pipelines, and inference pipelines that share a common storage layer for the ML 
+artifacts they produce and  consume (features, models).  
 
 MLOps is really about continual development of ML-enabled products that evolve over time. The available input 
 data (features) changes over time, the target you are trying to predict changes over time. You need to make changes to 
@@ -21,18 +21,18 @@ deployed to production.
 ## Feature Groups and Feature Views in Hopsworks
 ![fg_fv_in_hw](images/fg_fv_in_hw.png)
 
-Feature Groups (FG) in Hopsworks are defined by a schema (similar to a Pandas DataFrame or a table in a relational database).
-The schema consists of feature names and data types. One can think of these FGs as a destination table where feature
-pipelines regularly insert DataFrames, appending, updating, or deleting rows. A feature group can be seen as a collection 
-of conceptually related features that are computed together at the same  cadence. Feature groups provide a namespace 
-for features, so two features are allowed to have the same name as long as they belong to different feature groups. 
-For instance, in a real-life setting we would likely want to experiment with different window lengths. In that case,
-we can create feature groups with identical schema for each window length.
+Feature Groups (FG) in Hopsworks are defined by a schema (similar to a Pandas DataFrame or a table in a relational 
+database). The schema consists of feature names and data types. One can think of these FGs as a destination table where 
+feature pipelines regularly insert DataFrames, appending, updating, or deleting rows. A feature group can be seen as a 
+collection of conceptually related features that are computed together at the same  cadence. Feature groups provide a 
+namespace for features, so two features are allowed to have the same name as long as they belong to different feature 
+groups. For instance, in a real-life setting we would likely want to experiment with different window lengths. In that 
+case, we can create feature groups with identical schema for each window length.
 
 The Feature View is the collection of features (from feature groups) and transformation functions used to train models 
 and serve precomputed features to deployed models. The Feature View includes all of the features defined in the query 
-object you created earlier. It can additionally include filters, one or more columns identified as the target(s) (or label) 
-and the set of transformation functions and the features they are applied to.
+object you created earlier. It can additionally include filters, one or more columns identified as the target(s) 
+(or label) and the set of transformation functions and the features they are applied to.
 
 ## Data Validation for Feature Pipelines
 ![data_validation_for_Feature_pipelines](images/data_validation_for_Feature_pipelines.png)
