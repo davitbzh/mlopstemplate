@@ -122,6 +122,7 @@ def generate_df_with_profiles(credit_cards: list) -> pd.DataFrame:
         profile['cc_provider'] = credit_card['provider']
         profile['cc_type'] = random.choice(["credit", "debit"])
         profile['cc_expiration_date'] = credit_card['expires']
+        credit_card['age'] = age
         profiles.append(profile)
 
     # Cast the columns to the correct Pandas DType        
