@@ -1,6 +1,5 @@
 import random
-from mlopstemplate.features.synthetic import synthetic_data
-from mlopstemplate.features.synthetic import cc_features
+from mlopstemplate.synthetic_data import synthetic_data, cc_features
 
 synthetic_data.set_random_seed(12345)
 synthetic_data.FRAUD_RATIO = random.uniform(0.001, 0.005)

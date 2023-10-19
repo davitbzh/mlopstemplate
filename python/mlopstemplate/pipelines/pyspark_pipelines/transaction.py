@@ -12,7 +12,7 @@ from pyspark.sql.types import (
 
 import hopsworks
 from mlopstemplate.features import transactions
-from mlopstemplate.features.synthetic.data_sources import get_datasets
+from mlopstemplate.synthetic_data.data_sources import get_datasets
 from mlopstemplate.pipelines.pyspark_pipelines.pyspark_utils import *
 
 spark = SparkSession.builder.enableHiveSupport().getOrCreate()
@@ -33,6 +33,7 @@ schema = StructType([StructField("tid", StringType(), True),
                      StructField("days_until_card_expires", DoubleType(), True),
                      StructField("age_at_transaction", DoubleType(), True),
                      ])
+
 trans_df = spark.createDataFrame(trans_df, schema=schema)
 
 schema = StructType([StructField("tid", StringType(), True),

@@ -37,7 +37,7 @@ def get_year_month(datetime_col: pd.Series) -> pd.Series:
     return year_month
 
 
-def time_delta(datetime_col: pd.Series, shift: int) -> pd.Series:
+def time_shift(datetime_col: pd.Series, shift: int) -> pd.Series:
     """Compute time difference between each consecutive transaction.
 
     Args:
@@ -75,13 +75,26 @@ def time_delta_t_minus_1(df: pd.DataFrame) -> pd.DataFrame:
     - DataFrame: containing the new feature
      """
     df["time_delta_t_minus_1"] = df.groupby("cc_num") \
-        .apply(lambda x: time_delta(x["datetime"], -1)) \
+        .apply(lambda x: time_shift(x["datetime"], -1)) \
         .reset_index(level=0, drop=True)
-    df["time_delta_t_minus_1"] = (df.time_delta_t_minus_1 - df.datetime) / np.timedelta64(1, 'D')
+    df["time_delta_t_minus_1"] = time_delta(df.time_delta_t_minus_1,  df.datetime, 'D')
     df["time_delta_t_minus_1"] = df.time_delta_t_minus_1.fillna(0)
     df["country"] = df["country"].fillna("US")
     df = df.drop_duplicates(subset=['cc_num', 'datetime']).reset_index(drop=True)
     return df
+
+
+def time_delta(date1: pd.Series, date2: pd.Series, unit: str) -> pd.Series:
+    """Computes time difference in days between 2 pandas datetime series
+
+    Args:
+    - date1: pd.Series that contains datetime
+    - date2: pd.Series that contains datetime
+    - unit: time unit: 'D' or 'Y' days or years respectively
+    Returns:
+    - pd.Series: containing the time delta in units provided
+     """
+    return (date1 - date2) / np.timedelta64(1, unit)
 
 
 def select_features(df: pd.DataFrame) -> pd.DataFrame:

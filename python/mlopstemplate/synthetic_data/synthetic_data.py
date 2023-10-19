@@ -11,7 +11,6 @@ import datetime
 import hashlib
 import random
 import math
-import os
 import bisect
 from typing import Optional, Union, Any, Dict, List, TypeVar, Tuple
 
@@ -99,9 +98,9 @@ def generate_list_credit_card_numbers() -> list:
     delta_time_object = datetime.datetime.strptime(START_DATE, DATE_FORMAT)
     delta_time_object + datetime.timedelta(days=-728)
     for cc_num in credit_card_numbers:
-        credit_cards.append({'cc_num': cc_num, 'provider': 'visa',
+        credit_cards.append({'cc_num': cc_num, 'provider': random.choice(['visa', 'mastercard']),
                              'expires': faker.credit_card_expire(start=delta_time_object, end="+5y",
-                                                                 date_format="%m/%y")})
+                                                                 date_format="%Y-%m")})
     return credit_cards
 
 
@@ -113,19 +112,22 @@ def generate_df_with_profiles(credit_cards: list) -> pd.DataFrame:
         age = 0
         profile = None
         while age < 18 or age > 100:
-            profile = faker.profile(fields=['name', 'sex', 'mail', 'birthdate'])
+            profile = faker.profile(fields=['name', 'mail', 'birthdate'])
             dday = profile['birthdate']
             delta = datetime.datetime.now() - datetime.datetime(dday.year, dday.month, dday.day)
             age = int(delta.days / 365)
-        profile['City'] = address[2]
-        profile['Country'] = address[3]
+        profile['city'] = address[2]
+        profile['country'] = address[3]
         profile['cc_num'] = credit_card['cc_num']
-        credit_card['age'] = age
+        profile['cc_provider'] = credit_card['provider']
+        profile['cc_type'] = random.choice(["credit", "debit"])
+        profile['cc_expiration_date'] = credit_card['expires']
         profiles.append(profile)
 
     # Cast the columns to the correct Pandas DType        
     profiles_df = pd.DataFrame.from_records(profiles)
     profiles_df['birthdate'] = pd.to_datetime(profiles_df['birthdate'])
+    profiles_df['cc_expiration_date'] = pd.to_datetime(profiles_df['cc_expiration_date'])
     profiles_df['cc_num'] = pd.to_numeric(profiles_df['cc_num'])
 
     return profiles_df
@@ -281,7 +283,7 @@ def generate_susceptible_cards(credit_cards: list) -> list:
     susceptible_cards = []
     visited_cards = []
     for percentage, span in SUSCEPTIBLE_CARDS_DISTRIBUTION_BY_AGE.items():
-        n = int(TOTAL_UNIQUE_CASH_WITHDRAWALS * percentage)  ## TODO: here total expected fraud
+        n = int(TOTAL_UNIQUE_CASH_WITHDRAWALS * percentage)
         start, end = span
         for _ in range(n):
             for card in credit_cards:
@@ -446,6 +448,6 @@ def create_transactions_as_df(credit_cards: list) -> pd.DataFrame:
     transactions_df['latitude'] = pd.to_numeric(transactions_df['latitude'])
     transactions_df['datetime'] = pd.to_datetime(transactions_df['datetime'])
 
-    fraud_labels = transactions_df[["tid", "cc_num", "datetime", "fraud_label"]]
+    fraud_labels = transactions_df[["tid", "cc_num", "fraud_label"]]
     transactions_df = transactions_df.drop(columns=["fraud_label"])
     return transactions_df, fraud_labels

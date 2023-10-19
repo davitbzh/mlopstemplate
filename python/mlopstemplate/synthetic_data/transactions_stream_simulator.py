@@ -2,7 +2,7 @@ from confluent_kafka import Producer
 from pyspark.sql import SparkSession
 
 import hopsworks
-from mlopstemplate.features.synthetic.data_sources import get_datasets
+from mlopstemplate.synthetic_data.data_sources import get_datasets
 
 
 # change this according to your settings

@@ -73,8 +73,6 @@ def haversine_distance(long: float, lat: float, prev_long: float, prev_lat: floa
     return c
 
 
-# -
-
 def time_delta(prev_datetime: int, current_datetime: int) -> int:
     """Compute time difference between each consecutive transaction."""
     return prev_datetime - current_datetime

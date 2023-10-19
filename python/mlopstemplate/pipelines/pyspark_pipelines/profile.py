@@ -2,7 +2,7 @@ from pyspark.sql import SparkSession
 
 import hopsworks
 from mlopstemplate.features import profile
-from mlopstemplate.features.synthetic.data_sources import get_datasets
+from mlopstemplate.synthetic_data.data_sources import get_datasets
 
 spark = SparkSession.builder.enableHiveSupport().getOrCreate()
 spark_context = spark.sparkContext

@@ -1,6 +1,6 @@
 import hopsworks
 from mlopstemplate.features import profile
-from mlopstemplate.features.synthetic.data_sources import get_datasets
+from mlopstemplate.synthetic_data.data_sources import get_datasets
 
 # get data from the source
 _, _, profiles_df = get_datasets()
