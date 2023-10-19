@@ -114,7 +114,7 @@ def activity_level(trans_df: pd.DataFrame, lag: int) -> pd.DataFrame:
     trans_df[f"time_delta_t_minus_{lag}"] = trans_df[f"time_delta_t_minus_{lag}"].map(lambda x: time_delta_to_days(x))
     trans_df[f"time_delta_t_minus_{lag}"] = trans_df[f"time_delta_t_minus_{lag}"].fillna(0)
     trans_df = trans_df[
-        ["tid", "datetime", "cc_num", "category", "amount", "city", "country", "age_at_transaction" \
+        ["tid", "datetime", "cc_num", "category", "amount", "country", "age_at_transaction" \
             , "days_until_card_expires", f"loc_delta_t_minus_{lag}", f"time_delta_t_minus_{lag}"]]
     # Convert datetime to timestamp, because of a problem with UTC. Hopsworks assumes you use UTC, but if you don't use UTC
     # on your Python environment, the datetime will be wrong. With timestamps, we don't have the UTC problems when performing PIT Joins.
