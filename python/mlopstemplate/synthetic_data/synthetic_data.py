@@ -449,6 +449,6 @@ def create_transactions_as_df(credit_cards: list) -> pd.DataFrame:
     transactions_df['latitude'] = pd.to_numeric(transactions_df['latitude'])
     transactions_df['datetime'] = pd.to_datetime(transactions_df['datetime'])
 
-    fraud_labels = transactions_df[["tid", "cc_num", "fraud_label"]]
+    fraud_labels = transactions_df[["tid", "cc_num", "fraud_label", "datetime"]]
     transactions_df = transactions_df.drop(columns=["fraud_label"])
     return transactions_df, fraud_labels
