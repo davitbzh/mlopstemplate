@@ -15,6 +15,6 @@ def get_datasets():
     profiles_df = synthetic_data.create_profiles_as_df(credit_cards)
     trans_df, fraud_labels = synthetic_data.create_transactions_as_df(credit_cards)
     trans_df = cc_features.expiry_days(trans_df, profiles_df)
-    trans_df, profiles_df = cc_features.card_owner_age(trans_df, profiles_df)
+    #trans_df, profiles_df = cc_features.card_owner_age(trans_df, profiles_df)
 
     return trans_df, fraud_labels, profiles_df
