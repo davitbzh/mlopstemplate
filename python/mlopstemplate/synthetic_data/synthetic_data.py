@@ -100,7 +100,7 @@ def generate_list_credit_card_numbers() -> list:
     for cc_num in credit_card_numbers:
         credit_cards.append({'cc_num': cc_num, 'provider': random.choice(['visa', 'mastercard']),
                              'expires': faker.credit_card_expire(start=delta_time_object, end="+5y",
-                                                                 date_format="%Y-%m")})
+                                                                 date_format="%m/%y")})
     return credit_cards
 
 
