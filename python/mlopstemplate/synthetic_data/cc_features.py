@@ -12,7 +12,7 @@ def card_owner_age(trans_df: pd.DataFrame, profiles_df: pd.DataFrame) -> pd.Data
     """
     age_df = trans_df.merge(profiles_df, on="cc_num", how="left")
     trans_df["age_at_transaction"] = (age_df["datetime"] - age_df["birthdate"]) / np.timedelta64(1, "Y")
-    profiles_df = age_df[["name", "sex", "mail", "birthdate", "City", "Country", "cc_num", "datetime"]]
+    profiles_df = age_df[["name", "mail", "birthdate", "city", "country", "cc_num", "datetime"]]
     return trans_df, profiles_df
 
 
@@ -21,9 +21,7 @@ def expiry_days(trans_df: pd.DataFrame, credit_cards_df: pd.DataFrame) -> pd.Dat
        Unit test with DataFrames and sample data.
     """
     card_expiry_df = trans_df.merge(credit_cards_df, on="cc_num", how="left")
-    card_expiry_df["expires"] = pd.to_datetime(card_expiry_df["expires"], format="%m/%y")
-    trans_df["days_until_card_expires"] = (card_expiry_df["expires"] - card_expiry_df["datetime"]) \
-                                          / np.timedelta64(1, "D")
+    trans_df["days_until_card_expires"] = (card_expiry_df["cc_expiration_date"] - card_expiry_df["datetime"]) / np.timedelta64(1, "D")
     return trans_df
 
 
