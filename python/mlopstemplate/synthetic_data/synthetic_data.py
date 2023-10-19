@@ -128,7 +128,7 @@ def generate_df_with_profiles(credit_cards: list) -> pd.DataFrame:
     # Cast the columns to the correct Pandas DType        
     profiles_df = pd.DataFrame.from_records(profiles)
     profiles_df['birthdate'] = pd.to_datetime(profiles_df['birthdate'])
-    profiles_df['cc_expiration_date'] = pd.to_datetime(profiles_df['cc_expiration_date'])
+    profiles_df['cc_expiration_date'] = pd.to_datetime(profiles_df['cc_expiration_date'], format="%m/%y")
     profiles_df['cc_num'] = pd.to_numeric(profiles_df['cc_num'])
 
     return profiles_df

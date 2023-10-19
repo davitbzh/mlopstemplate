@@ -22,8 +22,8 @@ def expiry_days(trans_df: pd.DataFrame, credit_cards_df: pd.DataFrame) -> pd.Dat
     """
     card_expiry_df = trans_df.merge(credit_cards_df, on="cc_num", how="left")
     card_expiry_df["expires"] = pd.to_datetime(card_expiry_df["expires"], format="%m/%y")
-    trans_df["days_until_card_expires"] = (card_expiry_df["expires"] - card_expiry_df["datetime"]) / np.timedelta64(1,
-                                                                                                                    "D")
+    trans_df["days_until_card_expires"] = (card_expiry_df["expires"] - card_expiry_df["datetime"]) \
+                                          / np.timedelta64(1, "D")
     return trans_df
 
 
