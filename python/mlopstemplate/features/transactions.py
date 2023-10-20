@@ -112,6 +112,19 @@ def expiry_days(trans_df: pd.DataFrame, profiles_df: pd.DataFrame) -> pd.DataFra
     return trans_df
 
 
+def is_merchant_abroad(trans_df: pd.DataFrame, profiles_df: pd.DataFrame) -> pd.DataFrame:
+    """Computes if merchant location is abroad from card holders location
+    Args:
+    - trans_df: pd.DataFrame
+    - credit_cards_df: pd.DataFrame
+    Returns:
+    - pd.DataFrame:
+    """
+    merged_df = trans_df.merge(profiles_df, on="cc_num", how="left")
+    trans_df["is_merchant_abroad"] = merged_df["country"] == merged_df["country_of_residence"]
+    return trans_df
+
+
 def time_delta(date1: pd.Series, date2: pd.Series, unit: str) -> pd.Series:
     """Computes time difference in days between 2 pandas datetime series
 
