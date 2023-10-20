@@ -117,7 +117,7 @@ def generate_df_with_profiles(credit_cards: list) -> pd.DataFrame:
             delta = datetime.datetime.now() - datetime.datetime(dday.year, dday.month, dday.day)
             age = int(delta.days / 365)
         profile['city'] = address[2]
-        profile['country'] = address[3]
+        profile['country_of_residence'] = address[3]
         profile['cc_num'] = credit_card['cc_num']
         profile['cc_provider'] = credit_card['provider']
         profile['cc_type'] = random.choice(["credit", "debit"])
