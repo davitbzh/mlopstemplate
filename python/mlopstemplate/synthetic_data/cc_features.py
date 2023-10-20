@@ -5,26 +5,6 @@ from datetime import datetime, date
 from math import radians
 
 
-#
-def card_owner_age(trans_df: pd.DataFrame, profiles_df: pd.DataFrame) -> pd.DataFrame:
-    """Used only in feature pipelines (not online inference). 
-       Unit test with DataFrames and sample data.
-    """
-    age_df = trans_df.merge(profiles_df, on="cc_num", how="left")
-    trans_df["age_at_transaction"] = (age_df["datetime"] - age_df["birthdate"]) / np.timedelta64(1, "Y")
-    profiles_df = age_df[["name", "mail", "birthdate", "country", "cc_num", "datetime"]]
-    return trans_df, profiles_df
-
-
-def expiry_days(trans_df: pd.DataFrame, credit_cards_df: pd.DataFrame) -> pd.DataFrame:
-    """Used only in feature pipelines (not online inference). 
-       Unit test with DataFrames and sample data.
-    """
-    card_expiry_df = trans_df.merge(credit_cards_df, on="cc_num", how="left")
-    trans_df["days_until_card_expires"] = (card_expiry_df["cc_expiration_date"] - card_expiry_df["datetime"]) / np.timedelta64(1, "D")
-    return trans_df
-
-
 # +
 def haversine_distance(long: float, lat: float, prev_long: float, prev_lat: float) -> float:
     """Compute Haversine distance between each consecutive coordinate in (long, lat)."""

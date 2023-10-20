@@ -84,6 +84,34 @@ def time_delta_t_minus_1(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+#
+def card_owner_age(trans_df: pd.DataFrame, profiles_df: pd.DataFrame) -> pd.DataFrame:
+    """Computes age of card owner at the time of transaction in years
+    Args:
+    - trans_df: pd.DataFrame
+    - credit_cards_df: pd.DataFrame
+    Returns:
+    - pd.DataFrame:
+    """
+    age_df = trans_df.merge(profiles_df, on="cc_num", how="left")
+    trans_df["age_at_transaction"] = time_delta(age_df["datetime"], age_df["birthdate"], 'Y')
+    return trans_df
+
+
+def expiry_days(trans_df: pd.DataFrame, profiles_df: pd.DataFrame) -> pd.DataFrame:
+    """Computes days until card expires at the time of transaction
+    Args:
+    - trans_df: pd.DataFrame
+    - credit_cards_df: pd.DataFrame
+    Returns:
+    - pd.DataFrame:
+    """
+    card_expiry_df = trans_df.merge(profiles_df, on="cc_num", how="left")
+    trans_df["days_until_card_expires"] = \
+        time_delta(card_expiry_df["cc_expiration_date"], card_expiry_df["datetime"], 'D')
+    return trans_df
+
+
 def time_delta(date1: pd.Series, date2: pd.Series, unit: str) -> pd.Series:
     """Computes time difference in days between 2 pandas datetime series
 
@@ -105,4 +133,5 @@ def select_features(df: pd.DataFrame) -> pd.DataFrame:
     - DataFrame:
     """
     return df[
-        ["tid", "datetime", "month", "cc_num", "amount", "country", "loc_delta_t_minus_1", "time_delta_t_minus_1"]]
+        ["tid", "datetime", "month", "cc_num", "amount", "country", "loc_delta_t_minus_1", "time_delta_t_minus_1",
+         "days_until_card_expires", "age_at_transaction"]]

@@ -11,10 +11,6 @@ synthetic_data.TOTAL_UNIQUE_CASH_WITHDRAWALS = 1200
 
 def get_datasets():
     credit_cards = synthetic_data.generate_list_credit_card_numbers()
-    credit_cards_df = synthetic_data.create_credit_cards_as_df(credit_cards)
     profiles_df = synthetic_data.create_profiles_as_df(credit_cards)
     trans_df, fraud_labels = synthetic_data.create_transactions_as_df(credit_cards)
-    trans_df = cc_features.expiry_days(trans_df, profiles_df)
-    #trans_df, profiles_df = cc_features.card_owner_age(trans_df, profiles_df)
-
     return trans_df, fraud_labels, profiles_df
