@@ -1,25 +1,24 @@
 import numpy as np
 import pandas as pd
+from datetime import datetime, date
 
 
-def haversine(long: int, lat: int, shift: int) -> float:
-    """Compute Haversine distance between each consecutive coordinate in (long, lat).
-    
-    Args:
-    - long: int ...
-    - lat: int ...
-    - shift: int ...
-    Returns:
-    - float: ...    
+def haversine(longitude: pd.Series, latitude: pd.Series, prev_longitude: pd.Series,
+              prev_latitude: pd.Series) -> pd.Series:
+    """Compute Haversine distance between current and previous coordinate.
+
+    :param longitude:
+    :param latitude:
+    :param prev_longitude:
+    :param prev_latitude:
+    :return:
     """
 
-    long_shifted = long.shift(shift)
-    lat_shifted = lat.shift(shift)
-    long_diff = long_shifted - long
-    lat_diff = lat_shifted - lat
+    long_diff = prev_longitude - longitude
+    lat_diff = prev_latitude - latitude
 
     a = np.sin(lat_diff / 2.0) ** 2
-    b = np.cos(lat) * np.cos(lat_shifted) * np.sin(long_diff / 2.0) ** 2
+    b = np.cos(latitude) * np.cos(prev_latitude) * np.sin(long_diff / 2.0) ** 2
     c = 2 * np.arcsin(np.sqrt(a + b))
 
     return c
@@ -33,8 +32,18 @@ def get_year_month(datetime_col: pd.Series) -> pd.Series:
     - pd.Series: year and month string
     """
 
-    year_month = datetime_col.map(lambda x: str(x.year) + "-" + str(x.month))
-    return year_month
+    return datetime_col.map(lambda x: str(x.year) + "-" + str(x.month))
+
+
+def get_year_month_day(datetime_col: pd.Series) -> pd.Series:
+    """Compute year and month string from datetime column.
+
+    - datetime_col: pd.Series of datetime
+    Returns:
+    - pd.Series: year and month string
+    """
+
+    return datetime_col.map(lambda x: str(x.year) + "-" + str(x.month) + "-" + str(x.day))
 
 
 def time_shift(datetime_col: pd.Series, shift: int) -> pd.Series:
@@ -50,79 +59,50 @@ def time_shift(datetime_col: pd.Series, shift: int) -> pd.Series:
     return time_shifted
 
 
-def loc_delta_t_minus_1(df: pd.DataFrame) -> pd.DataFrame:
-    """Computes previous location of the transaction
-
-    Args:
-    - df: DataFrame that contains the transaction data
-    Returns:
-    - DataFrame: containing the new feature
-     """
-    df["loc_delta_t_minus_1"] = df.groupby("cc_num") \
-        .apply(lambda x: haversine(x["longitude"], x["latitude"], -1)) \
-        .reset_index(level=0, drop=True) \
-        .fillna(0)
-    df = df.drop_duplicates(subset=['cc_num', 'datetime']).reset_index(drop=True)
-    return df
-
-
-def time_delta_t_minus_1(df: pd.DataFrame) -> pd.DataFrame:
+def time_delta_t_minus_1(transaction_date: pd.Series, prev_transaction_date: pd.Series) -> pd.Series:
     """Computes time difference in days between current and previous transaction
 
     Args:
-    - df: DataFrame that contains the transaction data
+    - transaction_date: date of current transaction
+    - prev_transaction_date: date of previous transaction
     Returns:
-    - DataFrame: containing the new feature
+    - pd.Series: containing the int number of days between current and previous transaction
      """
-    df["time_delta_t_minus_1"] = df.groupby("cc_num") \
-        .apply(lambda x: time_shift(x["datetime"], -1)) \
-        .reset_index(level=0, drop=True)
-    df["time_delta_t_minus_1"] = time_delta(df.time_delta_t_minus_1,  df.datetime, 'D')
-    df["time_delta_t_minus_1"] = df.time_delta_t_minus_1.fillna(0)
-    df["country"] = df["country"].fillna("US")
-    df = df.drop_duplicates(subset=['cc_num', 'datetime']).reset_index(drop=True)
-    return df
+    return time_delta(transaction_date, prev_transaction_date, 'D')
 
 
 #
-def card_owner_age(trans_df: pd.DataFrame, profiles_df: pd.DataFrame) -> pd.DataFrame:
+def card_owner_age(transaction_date: pd.Series, birthdate: pd.Series) -> pd.Series:
     """Computes age of card owner at the time of transaction in years
     Args:
-    - trans_df: pd.DataFrame
-    - credit_cards_df: pd.DataFrame
+    - transaction_date: date of transaction
+    - birthdate: birth date
     Returns:
-    - pd.DataFrame:
+    - age in years
     """
-    age_df = trans_df.merge(profiles_df, on="cc_num", how="left")
-    trans_df["age_at_transaction"] = time_delta(age_df["datetime"], age_df["birthdate"], 'Y')
-    return trans_df
+    return time_delta(transaction_date, birthdate, 'Y')
 
 
-def expiry_days(trans_df: pd.DataFrame, profiles_df: pd.DataFrame) -> pd.DataFrame:
+def expiry_days(transaction_date: pd.Series, expiry_date: pd.Series) -> pd.Series:
     """Computes days until card expires at the time of transaction
     Args:
-    - trans_df: pd.DataFrame
-    - credit_cards_df: pd.DataFrame
+    - transaction_date: date of transaction
+    - expiry_date: date of cc expiration
     Returns:
-    - pd.DataFrame:
+    - days until card expires
     """
-    card_expiry_df = trans_df.merge(profiles_df, on="cc_num", how="left")
-    trans_df["days_until_card_expires"] = \
-        time_delta(card_expiry_df["cc_expiration_date"], card_expiry_df["datetime"], 'D')
-    return trans_df
+    return time_delta(transaction_date, expiry_date, 'D')
 
 
-def is_merchant_abroad(trans_df: pd.DataFrame, profiles_df: pd.DataFrame) -> pd.DataFrame:
+def is_merchant_abroad(transaction_country: pd.Series, county_of_residence: pd.Series) -> pd.Series:
     """Computes if merchant location is abroad from card holders location
     Args:
-    - trans_df: pd.DataFrame
-    - credit_cards_df: pd.DataFrame
+    - transaction_country: location of the merchant
+    - county_of_residence: residence of the card holder
     Returns:
     - pd.DataFrame:
     """
-    merged_df = trans_df.merge(profiles_df, on="cc_num", how="left")
-    trans_df["is_merchant_abroad"] = merged_df["country"] == merged_df["country_of_residence"]
-    return trans_df
+    return transaction_country == county_of_residence
 
 
 def time_delta(date1: pd.Series, date2: pd.Series, unit: str) -> pd.Series:
@@ -145,6 +125,23 @@ def select_features(df: pd.DataFrame) -> pd.DataFrame:
     Returns:
     - DataFrame:
     """
-    return df[
-        ["tid", "datetime", "month", "cc_num", "amount", "country", "loc_delta_t_minus_1", "time_delta_t_minus_1",
-         "days_until_card_expires", "age_at_transaction"]]
+    return df[["tid", "datetime", "month", "year_month_day", "cc_num", "amount", "country", "loc_delta_t_minus_1",
+               "time_delta_t_minus_1", "days_until_card_expires", "age_at_transaction",
+               "number_of_transactions_daily", "latitude", "longitude"]]
+
+
+def is_new_calendar_date(input_datetime: datetime) -> bool:
+    """
+    checks if it is new day compared to input_datetime argument
+
+    :param input_datetime:
+    :return: bool, True if it is new date
+    """
+    # Get the current date
+    current_date = date.today()
+
+    # Extract the date part from the input datetime
+    input_date = input_datetime.date()
+
+    # Compare the dates
+    return input_date > current_date

@@ -43,7 +43,6 @@ schema = StructType([StructField("tid", StringType(), True),
 
 labels_df = spark.createDataFrame(labels_df, schema=schema)
 
-
 schema = StructType([
                      StructField("name", StringType(), True),
                      StructField("mail", StringType(), True),
@@ -77,14 +76,12 @@ trans_df = trans_df.groupby("month").applyInPandas(lambda x: transactions.loc_de
 schema_string = add_feature_to_udf_schema(df_schema_to_udf_schema(trans_df), "time_delta_t_minus_1", "double")
 trans_df = trans_df.groupby("month").applyInPandas(lambda x: transactions.time_delta_t_minus_1(x), schema=schema_string)
 
-
 # Compute year and month string from datetime column.
 trans_df = trans_df.withColumn("month", udf(trans_df.datetime))
 
 # customer's age at transaction
 schema_string = add_feature_to_udf_schema(df_schema_to_udf_schema(trans_df), "age_at_transaction", "double")
 trans_df = trans_df.groupby("month").cogroup(profiles_df.groupby("country_of_residence")).applyInPandas(transactions.card_owner_age, schema=schema_string)
-
 
 # days untill card expires at the time of transaction
 schema_string = add_feature_to_udf_schema(df_schema_to_udf_schema(trans_df), "days_until_card_expires", "double")
