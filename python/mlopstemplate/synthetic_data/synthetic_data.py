@@ -305,7 +305,7 @@ def generate_normal_atm_withdrawals(cash_amounts: list, susceptible_cards: list)
     normal_atm_withdrawals = []
     atm_transactions = len(cash_amounts)
     cash_withdrawal_cards = random.sample(susceptible_cards, CASH_WITHRAWAL_CARDS_TOTAL // (
-                CASH_WITHRAWAL_CARDS_TOTAL // len(susceptible_cards) + 1))
+            CASH_WITHRAWAL_CARDS_TOTAL // len(susceptible_cards) + 1))
     atm_count = 0
     while atm_count < atm_transactions:
         for card in cash_withdrawal_cards:
@@ -362,8 +362,8 @@ def update_transactions(transactions: list, chains: list) -> list:
             original_transaction['cc_num'] = cc_num
             original_transaction['amount'] = inject_amounts[i]
             original_transaction['category'] = \
-            [category for category, category_perc_price in CATEGORY_PERC_PRICE.items() if
-             int(inject_amounts[i]) in range(int(category_perc_price[1]), int(category_perc_price[2]))][0]
+                [category for category, category_perc_price in CATEGORY_PERC_PRICE.items() if
+                 int(inject_amounts[i]) in range(int(category_perc_price[1]), int(category_perc_price[2]))][0]
             original_transaction['tid'] = generate_transaction_id(inject_timestamp, cc_num, amount)
             transactions[idx] = original_transaction
 

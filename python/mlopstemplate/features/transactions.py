@@ -70,7 +70,6 @@ def time_delta_t_minus_1(transaction_date: pd.Series, prev_transaction_date: pd.
      """
     return time_delta(transaction_date, prev_transaction_date, 'D')
 
-
 #
 def card_owner_age(transaction_date: pd.Series, birthdate: pd.Series) -> pd.Series:
     """Computes age of card owner at the time of transaction in years
