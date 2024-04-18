@@ -94,7 +94,7 @@ def card_owner_age(trans_df: pd.DataFrame, profiles_df: pd.DataFrame) -> pd.Data
     - pd.DataFrame:
     """
     age_df = trans_df.merge(profiles_df, on="cc_num", how="left")
-    trans_df["age_at_transaction"] = time_delta(age_df["datetime"], age_df["birthdate"], 'Y')
+    trans_df["age_at_transaction"] = time_delta(age_df["datetime"], age_df["birthdate"], 'D') / 365
     return trans_df
 
 
